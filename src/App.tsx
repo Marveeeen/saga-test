@@ -1,17 +1,46 @@
-import { useEffect } from 'react';
-import { Provider, useSelector, useDispatch } from 'react-redux'
+import React, { useCallback, useEffect, useRef } from "react";
+import { Provider, useSelector, useDispatch } from "react-redux";
 
-import { store } from './lib/store';
+import { store, selectTodos, fetchTodos, toggleTodo, removeTodo, addTodo } from "./lib/store";
 
 function TodoApp() {
   const dispatch = useDispatch();
-  const todos = useSelector(state => state);
+  const todos = useSelector(selectTodos);
+  const textRef = useRef<HTMLInputElement>(null)
+
+ const onAdd = useCallback(() => {
+    dispatch(addTodo(textRef.current!.value));
+    textRef.current!.value = "";
+ }, [dispatch])
 
   useEffect(() => {
-    dispatch({ type: "TODOS_FETCH_REQUESTED" });
-  }, [])
+    dispatch(fetchTodos());
+  }, []);
 
-  return <div className="App">{JSON.stringify(todos)}</div>
+  return (
+    <div className="App">
+      <div className="todos">
+        {todos?.map((todo) => (
+          <React.Fragment key={todo.id}>
+            <div>
+              <input
+                type="checkbox"
+                checked={todo.done}
+                onChange={() => dispatch(toggleTodo(todo))}
+              />
+              <span>{todo.text}</span>
+            </div>
+
+            <button onClick={() => dispatch(removeTodo(todo))}>Delete</button>
+          </React.Fragment>
+        ))}
+      </div>
+      <div className="add">
+        <input type="text" ref={textRef}/>
+        <button onClick={onAdd}>Add</button>
+      </div>
+    </div>
+  );
 }
 
 function App() {
@@ -19,7 +48,7 @@ function App() {
     <Provider store={store}>
       <TodoApp />
     </Provider>
-  )
+  );
 }
 
-export default App
+export default App;
