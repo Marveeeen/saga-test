@@ -12,8 +12,8 @@ Created a simple application that can create,read,update,delete data in the serv
 
 ## Optimizations
 
-- Add pending,success,error
-- Seperate files into action, reducer, saga
+- Add seperate pending, success, error response.
+- Seperate files for action, reducer, saga
 
 
 ## Lessons Learned:
